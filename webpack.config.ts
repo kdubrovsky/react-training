@@ -1,55 +1,30 @@
 import webpack from 'webpack';
 import path from 'path';
 
-// ---------------------------------------------------------- plugins imports
-
-import HTMLWebpackPlugin from 'html-webpack-plugin';
+import { BuildPaths } from './config/build/types/config';
+import { buildWebpackConfig } from './config/build/buildWebpackConfig';
 
 // ---------------------------------------------------------- pathes
 
-const entryPoint = path.resolve(__dirname, 'src', 'index.ts');
-const outputFolder = path.resolve(__dirname, 'build');
-const outputFilename = '[name].[contenthash].js';
+const entryPath = path.resolve(__dirname, 'src', 'index.ts');
+const buildPath = path.resolve(__dirname, 'build');
+const htmlPath = path.resolve(__dirname, 'public', 'index.html');
 
-const defaultExtensions = ['.tsx', '.ts', '.js'];
-
-// ---------------------------------------------------------- plugins settings
-const progressPluginSettings = new webpack.ProgressPlugin();
-const HTMLWebpackSettings = new HTMLWebpackPlugin({
-  template: path.resolve(__dirname, 'public', 'index.html'),
-});
-
-// ---------------------------------------------------------- enable plugins
-
-const plugins = [HTMLWebpackSettings, progressPluginSettings];
-
-// ---------------------------------------------------------- loaders rules
-
-const typeScriptRules = {
-  test: /\.tsx?$/,
-  use: 'ts-loader',
-  exclude: /node_modules/,
+const paths: BuildPaths = {
+  entry: entryPath,
+  build: buildPath,
+  html: htmlPath,
 };
 
 // ---------------------------------------------------------- global configuration
 
-const config: webpack.Configuration = {
-  mode: 'production', // development | production
-  entry: entryPoint,
-  output: {
-    filename: outputFilename,
-    path: outputFolder,
-    clean: true, // clear target folder before build
-  },
-  plugins: plugins,
-  module: {
-    // non JS loaders rules (png, css, ts, jpeg...) files processing:
-    rules: [typeScriptRules],
-  },
-  resolve: {
-    extensions: defaultExtensions,
-    // allows imports without extensions: import Component from './component'
-  },
-};
+const mode = 'development';
+const isDev = mode === 'development';
+
+const config: webpack.Configuration = buildWebpackConfig({
+  mode: 'development',
+  paths: paths,
+  isDev: isDev,
+});
 
 export default config;
