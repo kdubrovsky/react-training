@@ -1,11 +1,8 @@
-import { render } from 'react-dom';
-import Counter from './components/Counter';
+import { createRoot } from 'react-dom/client';
 
-const root = document.querySelector('#root');
+import App from './App';
 
-render(
-  <div>
-    <Counter />
-  </div>,
-  root
-);
+const container = document.querySelector('#root');
+const root = createRoot(container);
+
+root.render(<App />);
